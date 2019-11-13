@@ -1,0 +1,344 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "stepType": "CreateEnum",
+      "enum": "MessageType",
+      "values": [
+        "TEXT",
+        "PICTURE",
+        "LOCATION"
+      ]
+    },
+    {
+      "stepType": "CreateModel",
+      "model": "Chat"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "id",
+      "type": "String",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "Chat",
+      "field": "id",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "Chat",
+      "field": "id",
+      "directive": "default",
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "Chat",
+      "field": "id",
+      "directive": "id"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "name",
+      "type": "String",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "picture",
+      "type": "String",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "members",
+      "type": "User",
+      "arity": "list"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "Chat",
+      "field": "members",
+      "directive": "relation"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "Chat",
+      "field": "members",
+      "directive": "relation",
+      "argument": "name",
+      "value": "\"ChatMembers\""
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "owner",
+      "type": "User",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "Chat",
+      "field": "owner",
+      "directive": "relation"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "Chat",
+      "field": "owner",
+      "directive": "relation",
+      "argument": "name",
+      "value": "\"ChatAdmin\""
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "messsages",
+      "type": "ChatMessage",
+      "arity": "list"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "Chat",
+      "field": "createdAt",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "Chat",
+      "field": "createdAt",
+      "directive": "default",
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Chat",
+      "field": "updatedAt",
+      "type": "DateTime",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "Chat",
+      "field": "updatedAt",
+      "directive": "updatedAt"
+    },
+    {
+      "stepType": "CreateModel",
+      "model": "ChatMessage"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "id",
+      "type": "String",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "ChatMessage",
+      "field": "id",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "ChatMessage",
+      "field": "id",
+      "directive": "default",
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "ChatMessage",
+      "field": "id",
+      "directive": "id"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "chat",
+      "type": "Chat",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "sender",
+      "type": "User",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "content",
+      "type": "String",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "ChatMessage",
+      "field": "createdAt",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "ChatMessage",
+      "field": "createdAt",
+      "directive": "default",
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "type",
+      "type": "MessageType",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "password",
+      "type": "String",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "username",
+      "type": "String",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "User",
+      "field": "username",
+      "directive": "unique"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "picture",
+      "type": "String",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "chats",
+      "type": "Chat",
+      "arity": "list"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "User",
+      "field": "chats",
+      "directive": "relation"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "User",
+      "field": "chats",
+      "directive": "relation",
+      "argument": "name",
+      "value": "\"ChatMembers\""
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "chatsOwned",
+      "type": "Chat",
+      "arity": "list"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "User",
+      "field": "chatsOwned",
+      "directive": "relation"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "User",
+      "field": "chatsOwned",
+      "directive": "relation",
+      "argument": "name",
+      "value": "\"ChatAdmin\""
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "User",
+      "field": "createdAt",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "User",
+      "field": "createdAt",
+      "directive": "default",
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "field": "updatedAt",
+      "type": "DateTime",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "User",
+      "field": "updatedAt",
+      "directive": "updatedAt"
+    },
+    {
+      "stepType": "DeleteField",
+      "model": "User",
+      "field": "test"
+    },
+    {
+      "stepType": "UpdateDirectiveArgument",
+      "model": "Post",
+      "field": "published",
+      "directive": "default",
+      "argument": "",
+      "newValue": "false"
+    },
+    {
+      "stepType": "UpdateField",
+      "model": "Post",
+      "field": "author",
+      "arity": "required"
+    }
+  ]
+}
