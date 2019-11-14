@@ -12,6 +12,86 @@
     },
     {
       "stepType": "CreateModel",
+      "model": "ChatMessage"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "id",
+      "type": "String",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "ChatMessage",
+      "field": "id",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "ChatMessage",
+      "field": "id",
+      "directive": "default",
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "ChatMessage",
+      "field": "id",
+      "directive": "id"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "chat",
+      "type": "Chat",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "sender",
+      "type": "User",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "content",
+      "type": "String",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "required"
+    },
+    {
+      "stepType": "CreateDirective",
+      "model": "ChatMessage",
+      "field": "createdAt",
+      "directive": "default"
+    },
+    {
+      "stepType": "CreateDirectiveArgument",
+      "model": "ChatMessage",
+      "field": "createdAt",
+      "directive": "default",
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "stepType": "CreateField",
+      "model": "ChatMessage",
+      "field": "type",
+      "type": "MessageType",
+      "arity": "optional"
+    },
+    {
+      "stepType": "CreateModel",
       "model": "Chat"
     },
     {
@@ -137,86 +217,6 @@
       "model": "Chat",
       "field": "updatedAt",
       "directive": "updatedAt"
-    },
-    {
-      "stepType": "CreateModel",
-      "model": "ChatMessage"
-    },
-    {
-      "stepType": "CreateField",
-      "model": "ChatMessage",
-      "field": "id",
-      "type": "String",
-      "arity": "required"
-    },
-    {
-      "stepType": "CreateDirective",
-      "model": "ChatMessage",
-      "field": "id",
-      "directive": "default"
-    },
-    {
-      "stepType": "CreateDirectiveArgument",
-      "model": "ChatMessage",
-      "field": "id",
-      "directive": "default",
-      "argument": "",
-      "value": "cuid()"
-    },
-    {
-      "stepType": "CreateDirective",
-      "model": "ChatMessage",
-      "field": "id",
-      "directive": "id"
-    },
-    {
-      "stepType": "CreateField",
-      "model": "ChatMessage",
-      "field": "chat",
-      "type": "Chat",
-      "arity": "required"
-    },
-    {
-      "stepType": "CreateField",
-      "model": "ChatMessage",
-      "field": "sender",
-      "type": "User",
-      "arity": "required"
-    },
-    {
-      "stepType": "CreateField",
-      "model": "ChatMessage",
-      "field": "content",
-      "type": "String",
-      "arity": "optional"
-    },
-    {
-      "stepType": "CreateField",
-      "model": "ChatMessage",
-      "field": "createdAt",
-      "type": "DateTime",
-      "arity": "required"
-    },
-    {
-      "stepType": "CreateDirective",
-      "model": "ChatMessage",
-      "field": "createdAt",
-      "directive": "default"
-    },
-    {
-      "stepType": "CreateDirectiveArgument",
-      "model": "ChatMessage",
-      "field": "createdAt",
-      "directive": "default",
-      "argument": "",
-      "value": "now()"
-    },
-    {
-      "stepType": "CreateField",
-      "model": "ChatMessage",
-      "field": "type",
-      "type": "MessageType",
-      "arity": "required"
     },
     {
       "stepType": "CreateField",
