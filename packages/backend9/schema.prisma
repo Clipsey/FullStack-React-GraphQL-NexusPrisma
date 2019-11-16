@@ -1,0 +1,58 @@
+generator photonjs {
+  provider = "photonjs"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:mysecretpassword@localhost:5432/test"
+}
+
+model Post {
+  id        String   @default(cuid()) @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean  @default(false)
+  title     String
+  content   String?
+  author    User
+}
+
+enum MessageType {
+  TEXT
+  PICTURE
+  LOCATION
+}
+
+model ChatMessage {
+  id        String       @default(cuid()) @id
+  chat      Chat
+  sender    User
+  content   String?
+  createdAt DateTime     @default(now())
+  type      MessageType?
+}
+
+model Chat {
+  id        String        @default(cuid()) @id
+  name      String?
+  picture   String?
+  members   User[]        @relation(name: "ChatMembers")
+  owner     User          @relation(name: "ChatAdmin")
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model User {
+  id         String   @default(cuid()) @id
+  email      String   @unique
+  password   String
+  name       String?
+  posts      Post[]
+  username   String?  @unique
+  picture    String?
+  chats      Chat[]   @relation(name: "ChatMembers")
+  chatsOwned Chat[]   @relation(name: "ChatAdmin")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

@@ -1,0 +1,11 @@
+{
+	"scripts": {
+		"start": "ts-node --transpile-only  src/main"
+	},
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"graphql-yoga": "^1.18.3",
+		"jsonwebtoken": "^8.5.1",
+		"nexus-prisma": "^0.5.2"
+	}
+}
