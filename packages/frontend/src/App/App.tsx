@@ -10,12 +10,10 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
-
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { BrowserRouter } from 'react-router-dom';
-import Routing from '../Routing/Routing';
-import { Link } from 'react-router-dom';
 
+import Routing from '../Routing/Routing';
 import { storeContext } from '../Store/Store';
 import { useStore } from '../Store/StoreHook';
 
@@ -35,7 +33,6 @@ const errorLink = onError(({ graphQLErrors }) => {
 });
 
 const link = split(
-	// split based on operation type
 	({ query }) => {
 		const definition = getMainDefinition(query);
 		return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
@@ -44,16 +41,30 @@ const link = split(
 	httpLink
 );
 
+const authLink = new ApolloLink((operation, forward) => {
+	const token = localStorage.getItem('auth_token');
+
+	// Use the setContext method to set the HTTP headers.
+	operation.setContext({
+		headers: {
+			authorization: token ? `${token}` : ''
+		}
+	});
+
+	// Call the next link in the middleware chain.
+	return forward(operation);
+});
+
 const cache = new InMemoryCache();
+
 const client = new ApolloClient({
 	cache,
-	link: ApolloLink.from([ errorLink, link ])
+	link: ApolloLink.from([ errorLink, authLink, link ])
 });
 
 const App = (): JSX.Element => {
 	const store = useStore();
-
-	console.log(store);
+	// const { setUser } = useContext(storeContext);
 
 	const Box = styled.div(
 		{

@@ -1,10 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
-import styled from 'styled-components';
-import { space, layout, typography, color } from 'styled-system';
-import { Redirect } from 'react-router';
-import { render } from 'react-dom';
+// import styled from 'styled-components';
+// import { space, layout, typography, color } from 'styled-system';
+// import { Redirect } from 'react-router';
 
 import { storeContext } from '../Store/Store';
 
@@ -50,7 +49,7 @@ const LoginForm = (props) => {
 	const [ name, setName ] = useState('');
 	const [ username, setUsername ] = useState('');
 	const [ picture, setPicture ] = useState('');
-	const [ redirector, setRedirector ] = useState(null);
+	// const [ redirector, setRedirector ] = useState(null);
 
 	let route = props.match.path;
 	let mutationMethod;
@@ -62,21 +61,21 @@ const LoginForm = (props) => {
 
 	const [ method ] = useMutation(mutationMethod, {
 		onCompleted: (data) => {
-			console.log(data);
+			// setTimeout(() => setRedirector(<Redirect to="/feed" />), 5000);
 
-			// setPassword('');
-			// setEmail('');
-			// setName('');
-			// setUsername('');
-			// setPicture('');
-
-			setRedirector(<Redirect to="/feed" />);
+			props.history.push(`/feed`);
 
 			if (route === '/login') {
+				const token = data.userLogin.token;
+				localStorage.setItem('auth_token', token);
 				setUser(data.userLogin.user);
 			} else {
+				const token = data.userRegister.token;
+				localStorage.setItem('auth_token', token);
 				setUser(data.userRegister.user);
 			}
+
+			// setTimeout(() => props.history.push(`/feed`), 2000);
 		}
 	});
 
@@ -93,22 +92,6 @@ const LoginForm = (props) => {
 		});
 	};
 
-	const Box = styled.div(
-		{
-			width: '50%',
-			height: '20%',
-			display: 'flex',
-			'box-sizing': 'border-box',
-			'align-items': 'center',
-			'justify-content': 'center',
-			'flex-direction': 'column'
-		},
-		space,
-		color,
-		layout,
-		typography
-	);
-
 	const boxStyle = {
 		display: 'flex',
 		boxSizing: 'border-box',
@@ -119,7 +102,7 @@ const LoginForm = (props) => {
 
 	return (
 		<React.Fragment>
-			{redirector}
+			{/* {redirector} */}
 			<form onSubmit={handleSubmit}>
 				{/* <Box> */}
 				<div style={boxStyle}>

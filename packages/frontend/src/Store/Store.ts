@@ -4,10 +4,10 @@ import React from 'react';
 
 export interface StoreContext {
 	currentUser: any;
-	setUser: (currentUser: any) => void;
+	setUser: (currentUser?: any) => void;
 }
 
 export const storeContext = React.createContext({
 	currentUser: null,
-	setUser: ({}) => {}
+	setUser: () => {}
 });

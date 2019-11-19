@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 
@@ -31,18 +31,13 @@ const EditPost = (props: any) => {
 	const [ content, setContent ] = useState(post.content);
 	const [ editMode, setMode ] = useState(false);
 	const [ editor ] = useMutation(MUTATION, {
-		onCompleted: (data) => {
-			console.log(data);
-		},
-		onError: (err) => {
-			console.log(err);
+		onCompleted: (_) => {
+			setMode(false);
 		}
 	});
 
 	const editPost = (e: any) => {
 		e.preventDefault();
-		console.log('edit');
-		console.log(post.id);
 		editor({
 			variables: {
 				title,

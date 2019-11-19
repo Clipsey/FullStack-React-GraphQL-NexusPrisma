@@ -1,10 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { gql } from 'apollo-boost';
-import { useMutation, useSubscription, useQuery } from '@apollo/react-hooks';
+import { useMutation, useSubscription, useQuery, useLazyQuery } from '@apollo/react-hooks';
 import idx from 'idx';
 
-import { storeContext } from '../Store/Store';
+import { storeContext, StoreContext } from '../Store/Store';
 import EditPost from '../EditPost/EditPost';
 
 interface User {
@@ -19,27 +18,26 @@ interface Post {
 	author: User;
 }
 
-const postStyle = {
-	margin: '10px',
-	scroll: 'overflow',
-	height: '50px'
-};
-
 const containerStyle = {
 	height: '100%',
 	width: '100%',
 	display: 'flex',
-	scroll: 'overflow',
 	justifyContent: 'space-around'
 };
 
 const postsContainerStyle = {
-	overflow: 'scroll',
+	overflow: 'auto',
 	height: '100%'
 };
 
+const postStyle = {
+	margin: '10px',
+	height: '50px'
+};
+
 const Feed = (): JSX.Element => {
-	let store = useContext<any>(storeContext);
+	const store = useContext<StoreContext>(storeContext);
+	const currentUserEmail = idx(store, (_) => _.currentUser.email);
 
 	const [ title, setTitle ] = useState('');
 	const [ content, setContent ] = useState('');
@@ -80,19 +78,17 @@ const Feed = (): JSX.Element => {
 	// 		}
 	// 	}
 	// `;
+
 	const [ makePost ] = useMutation(MUTATION, {
-		onCompleted: (data) => {
-			console.log(data);
-		},
-		onError: (err) => {
-			console.log(err);
+		onCompleted: (_) => {
+			setTitle('');
+			setContent('');
 		}
 	});
 	const queryRet = useQuery(QUERY);
-	const subRet = useSubscription(SUBSCRIPTION, {
+	useSubscription(SUBSCRIPTION, {
 		variables: { author: 'email' },
 		onSubscriptionData: (data2) => {
-			console.log(data2);
 			//Remake query if posts don't come in?
 			// TODO: Figure out why empty data comes in subscription?
 			// Research:
@@ -102,11 +98,10 @@ const Feed = (): JSX.Element => {
 			// 	3a) Maybe @apollo/react-hooks isn't implemented right?
 			// 4) Try outdated react-apollo-hooks ?
 			queryRet.refetch();
-		},
-		onSubscriptionComplete: () => {
-			console.log('Subscribed');
 		}
 	});
+
+	// setTimeout(() => method(), 2000);
 
 	const postsData = idx(queryRet, (_) => _.data.posts);
 	let postsDivs = <div />;
@@ -126,20 +121,9 @@ const Feed = (): JSX.Element => {
 		});
 	}
 
-	const testClick = () => {
-		console.log(subRet.data);
-		console.log(subRet.loading);
-		console.log(subRet.error);
-
-		console.log(queryRet.data.posts);
-		console.log(postsDivs);
-	};
-
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
-		// const authorEmail = idx(store, (_) => _.currentUser.email);
-		const authorEmail = store.currentUser.email;
-		console.log(authorEmail);
+		const authorEmail = currentUserEmail;
 
 		makePost({
 			variables: {

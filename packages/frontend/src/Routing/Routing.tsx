@@ -1,14 +1,12 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Link, Redirect, withRouter, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Redirect, Switch } from 'react-router-dom';
 import AuthForms from '../AuthForms/AuthForms';
-import { storeContext } from '../Store/Store';
+import { storeContext, StoreContext } from '../Store/Store';
 import Feed from '../Feed/Feed';
-import Chat from '../Chat/Chat';
+import ChatContainer from '../ChatContainer/ChatContainer';
 
 const Routing = (): JSX.Element => {
-	let store = useContext(storeContext);
-
-	console.log(store);
+	const store = useContext<StoreContext>(storeContext);
 
 	// const flexStyle = {
 	// 	display: 'flex',
@@ -47,7 +45,7 @@ const Routing = (): JSX.Element => {
 				<Route exact path="/login" component={AuthForms} />
 				<Route exact path="/signup" component={AuthForms} />
 				<Route path="/feed" component={Feed} />
-				<Route path="/chat" component={Chat} />
+				<Route path="/chat" component={ChatContainer} />
 			</Switch>
 		</Router>
 		// </div>

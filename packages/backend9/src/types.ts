@@ -10,6 +10,10 @@ export const Query = queryType({
 		t.crud.users({ ordering: true });
 		t.crud.post();
 		t.crud.posts({ filtering: true, ordering: true });
+		t.crud.chat();
+		t.crud.chats();
+		t.crud.chatMessages();
+		t.crud.chatMessage();
 	}
 });
 
@@ -19,6 +23,9 @@ export const Mutation = mutationType({
 		t.crud.createOnePost();
 		t.crud.deleteOneUser();
 		t.crud.deleteOnePost();
+		t.crud.createOneChat();
+		t.crud.updateOneChat();
+		t.crud.createOneChatMessage();
 
 		t.field('updatePost', {
 			type: 'Post',
@@ -58,15 +65,11 @@ export const Mutation = mutationType({
 			resolve: async (parent, { title, authorEmail, content }, ctx, info) => {
 				// With Authentication setup, ensure that currentUser is the user creating the post
 
-				console.log(ctx.photon.posts);
-
 				const author = await ctx.photon.users.findOne({
 					where: {
 						email: authorEmail
 					}
 				});
-
-				// console.log(author);
 
 				const newPost = await ctx.photon.posts.create({
 					data: {
@@ -78,13 +81,52 @@ export const Mutation = mutationType({
 					}
 				});
 
-				// console.log(newPost);
-
 				await ctx.pubsub.publish('POST_PUSH', {
 					newPost
 				});
 
 				return newPost;
+			}
+		});
+
+		// model Chat {
+		// 	id        String        @default(cuid()) @id
+		// 	name      String?
+		// 	picture   String?
+		// 	members   User[]        @relation(name: "ChatMembers")
+		// 	owner     User          @relation(name: "ChatAdmin")
+		// 	messages  ChatMessage[]
+		// 	createdAt DateTime      @default(now())
+		// 	updatedAt DateTime      @updatedAt
+		// }
+
+		t.field('makeChat', {
+			type: 'Chat',
+			args: {
+				ownerEmail: stringArg({ required: true }),
+				name: stringArg(),
+				picture: stringArg(),
+				members: stringArg({ list: true })
+			},
+			resolve: async (parent, { ownerEmail, name, picture, members }, ctx, info) => {
+				const connector = members.map((email) => ({
+					email: email
+				}));
+
+				const newChat = await ctx.photon.chats.create({
+					data: {
+						name,
+						picture,
+						owner: {
+							connect: { email: ownerEmail }
+						},
+						members: {
+							connect: connector
+						}
+					}
+				});
+
+				return newChat;
 			}
 		});
 	}
@@ -100,7 +142,6 @@ export const Subscription = objectType({
 			},
 			subscribe: withFilter((parent, args, ctx) => {
 				const ret = ctx.pubsub.asyncIterator('POST_PUSH');
-				console.log(ret);
 				return ret;
 			}, (payload, args) => true)
 			// resolve: (parent, args, ctx, info) => console.log('sent')
@@ -141,7 +182,7 @@ export const Chat = objectType({
 		t.model.picture();
 		t.model.members();
 		t.model.owner();
-		t.model.messages();
+		t.model.messages({ ordering: true });
 		t.model.createdAt();
 		t.model.updatedAt();
 	}
@@ -158,8 +199,8 @@ export const User = objectType({
 
 		t.model.username();
 		t.model.picture();
-		t.model.chats();
-		t.model.chatsOwned();
+		t.model.chats({ ordering: true });
+		t.model.chatsOwned({ ordering: true });
 		t.model.createdAt();
 		t.model.updatedAt();
 	}
@@ -181,25 +222,30 @@ export const userLogin = mutationField('userLogin', {
 		email: stringArg({ required: true }),
 		password: stringArg({ required: true })
 	},
-	resolve: async (parent, { email, password }, { photon, currentUsers }, info) => {
+	resolve: async (parent, { email, password }, ctx, info) => {
 		try {
-			const user = await photon.users.findOne({
+			const user = await ctx.photon.users.findOne({
 				where: {
 					email
 				}
 			});
+			ctx.claims = '';
 			var validpass = await bcrypt.compare(password, user.password);
 			if (validpass) {
-				const token = jwt.sign(user, config.jwt.JWT_SECRET);
-
-				console.log(user);
-				console.log(token);
-
-				currentUsers[user.email] = true;
+				const token = jwt.sign(
+					{
+						id: user.id,
+						email: user.email,
+						claims: {
+							isLoggedIn: true
+						}
+					},
+					'ryansabik'
+				);
 
 				return {
 					user,
-					token
+					token: JSON.stringify(token)
 				};
 			} else {
 				throw new Error('Credentials are wrong');
@@ -219,7 +265,7 @@ export const userRegister = mutationField('userRegister', {
 		username: stringArg({ required: true }),
 		picture: stringArg()
 	},
-	resolve: async (parent, { email, password, name, username, picture }, { photon, currentUsers }) => {
+	resolve: async (parent, { email, password, name, username, picture }, { photon }) => {
 		try {
 			let existingUser = await photon.users.findOne({
 				where: {
@@ -257,22 +303,18 @@ export const userRegister = mutationField('userRegister', {
 			const token = jwt.sign(
 				{
 					id: user.id,
-					email: user.email
+					email: user.email,
+					claims: {
+						isLoggedIn: true
+					}
 				},
-				config.jwt.JWT_SECRET,
-				{
-					expiresIn: '30d'
-				}
+				// config.jwt.JWT_SECRET,
+				'ryansabik'
 			);
-
-			console.log(user);
-			console.log(token);
-
-			currentUsers[user.email] = true;
 
 			return {
 				user,
-				token
+				token: JSON.stringify(token)
 			};
 		} catch (e) {
 			console.log(e);
