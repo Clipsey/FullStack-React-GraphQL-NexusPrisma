@@ -72,6 +72,11 @@ const ChatPreview = styled.div({
 	cursor: 'pointer'
 });
 
+const TestButton = styled.button({
+	position: 'absolute',
+	bottom: '0'
+});
+
 const QUERY_CHATS_OWNED = gql`
 	query user($email: String!) {
 		user(where: { email: $email }) {
@@ -195,6 +200,7 @@ const ChatContainer = (props: any) => {
 					</Form>
 				</React.Fragment>
 			)}
+			<TestButton onClick={refetchChats} />
 		</ChatsContainer>
 	);
 };

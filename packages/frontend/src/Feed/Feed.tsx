@@ -41,11 +41,19 @@ const Feed = (): JSX.Element => {
 
 	const [ title, setTitle ] = useState('');
 	const [ content, setContent ] = useState('');
+	const [ refresh, triggerRefresh ] = useState(true);
 
 	const SUBSCRIPTION = gql`
 		subscription {
 			newPost(author: "email") {
+				id
+				title
 				content
+				createdAt
+				author {
+					email
+					username
+				}
 			}
 		}
 	`;
@@ -67,6 +75,13 @@ const Feed = (): JSX.Element => {
 		mutation makePost($title: String!, $authorEmail: String!, $content: String!) {
 			makePost(title: $title, authorEmail: $authorEmail, content: $content) {
 				id
+				title
+				content
+				createdAt
+				author {
+					email
+					username
+				}
 			}
 		}
 	`;
@@ -85,10 +100,25 @@ const Feed = (): JSX.Element => {
 			setContent('');
 		}
 	});
-	const queryRet = useQuery(QUERY);
+	const { data } = useQuery(QUERY);
 	useSubscription(SUBSCRIPTION, {
 		variables: { author: 'email' },
 		onSubscriptionData: (data2) => {
+			console.log(data.posts);
+			console.log(data2.subscriptionData.data);
+			const newPost = data2.subscriptionData.data.newPost;
+
+			const index = data.posts.findIndex((post: any) => {
+				return newPost.id === post.id;
+			});
+			if (index === -1) {
+				data.posts.unshift(newPost);
+			} else {
+				data.posts[index] = newPost;
+			}
+
+			triggerRefresh(!refresh);
+
 			//Remake query if posts don't come in?
 			// TODO: Figure out why empty data comes in subscription?
 			// Research:
@@ -97,13 +127,18 @@ const Feed = (): JSX.Element => {
 			// 3) Subscription with same query works in playground
 			// 	3a) Maybe @apollo/react-hooks isn't implemented right?
 			// 4) Try outdated react-apollo-hooks ?
-			queryRet.refetch();
+
+			// queryRet.
+			// queryRet.refetch();
 		}
 	});
 
+	// console.log(data.posts);
+
 	// setTimeout(() => method(), 2000);
 
-	const postsData = idx(queryRet, (_) => _.data.posts);
+	// const postsData = idx(data, (_) => _.data.posts);
+	const postsData = idx(data, (_) => _.posts);
 	let postsDivs = <div />;
 	if (postsData) {
 		postsDivs = postsData.map((post: Post) => {

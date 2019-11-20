@@ -77,6 +77,11 @@ const UserDiv = styled.div({
 	position: 'relative'
 });
 
+const TestButton = styled.button({
+	position: 'absolute',
+	top: '0'
+});
+
 const QUERY = gql`
 	query chatMessages($chatId: ID!) {
 		chat(where: { id: $chatId }) {
@@ -166,6 +171,10 @@ const Chat = (props: any) => {
 		};
 	};
 
+	const testClick = () => {
+		chatMessageResponse.refetch();
+	};
+
 	const chatMessages = idx(chatMessageResponse, (_) => _.data.chat.messages) || [];
 	const chatMessageDivs = chatMessages.map((chatMessage: ChatMessageInterface) => {
 		return (
@@ -211,6 +220,7 @@ const Chat = (props: any) => {
 				<input type="submit" value="Send" />
 				<UserContainer>{UserDivs}</UserContainer>
 			</Form>
+			<TestButton onClick={testClick} />
 		</Container>
 	);
 };
